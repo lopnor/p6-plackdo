@@ -1,0 +1,18 @@
+use v6;
+
+use Test;
+use Plackdo::Util;
+use Plackdo::Handler::Standalone;
+
+ok my $classname = load_class('Standalone', 'Plackdo::Handler'), 'load_class ok';
+is $classname, 'Plackdo::Handler::Standalone';
+ok my $ins = load_instance('Standalone', 'Plackdo::Handler'), 'load_instance ok';
+isa_ok $ins, Plackdo::Handler::Standalone;
+
+
+ok ! load_class('NotExistingHandler', 'Plackdo::Handler');
+ok ! load_instance('NotExistingHandler', 'Plackdo::Handler');
+
+done_testing;
+
+# vim:ft=perl6

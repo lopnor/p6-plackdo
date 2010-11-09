@@ -1,0 +1,6 @@
+use v6;
+use Foobar;
+
+Foobar.new.webapp;
+
+# vim: ft=perl6
