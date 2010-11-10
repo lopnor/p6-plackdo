@@ -1,6 +1,10 @@
 use v6;
-use Foobar;
 
-Foobar.new.webapp;
-
+sub (%env) {
+    return 
+        200,
+        ( Content-Type => 'text/plain' ),
+        ( 'Hello, Rakudo' )
+    ;
+}
 # vim: ft=perl6
