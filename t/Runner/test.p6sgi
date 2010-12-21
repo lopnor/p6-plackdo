@@ -1,0 +1,15 @@
+use v6;
+
+sub (%env) {
+    my $str = %env.perl;
+    return [
+        200,
+        [ 
+            Content-Length => $str.bytes,
+            Content-Type => 'text/plain',
+        ],
+        [ $str ]
+    ];
+}
+
+# vim: ft=perl6 :
