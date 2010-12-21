@@ -15,8 +15,12 @@ module Plackdo::Util {
             }
             $classname.subst(/^\+/,'');
         }
-        eval "use $classname";
-        $! and return;
+        try {
+            require $classname;
+            CATCH {
+                default {$classname = ''; }
+            }
+        }
         return $classname;
     }
 
