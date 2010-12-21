@@ -11,11 +11,11 @@ my %status =
     500 => 'Internal Server Error';
 
 class Plackdo::Handler::Standalone does Plackdo::Handler {
-    has $.host is rw = '127.0.0.1';
-    has $.port is rw = 5000;
+    has Str $.host is rw = '0.0.0.0';
+    has Int $.port is rw = 5000;
 
-    method set_attr (*@args) {
-        for @args {
+    method set_attr (*%args) {
+        for %args.pairs {
             my $value = .value;
             given .key {
                 when 'host' {$.host = $value}
@@ -106,7 +106,7 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
         return join("\r\n",
             join(' ', "HTTP/1.0", $status, %status{$status}),
             $headers,
-            join('',@args[2])
+            [~]@args[2]
         );
     }
 }
