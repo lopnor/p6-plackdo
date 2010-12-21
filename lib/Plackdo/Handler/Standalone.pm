@@ -99,7 +99,7 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
     method make_response (@args) {
         my $status = @args[0];
         my $headers;
-        for @args[1] {
+        for @args[1].hash {
             $headers ~= join(": ", .key, .value) ~ "\r\n";
         }
 

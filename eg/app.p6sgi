@@ -1,10 +1,13 @@
 use v6;
 
 sub (%env) {
-    return 
+    return (
         200,
-        ( Content-Type => 'text/plain' ),
-        ( 'Hello, Rakudo' )
-    ;
+        [ 
+            Content-Type => 'text/plain', 
+            Content-Length => %env.perl.bytes,
+        ],
+        [ %env.perl ]
+    );
 }
 # vim: ft=perl6

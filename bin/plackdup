@@ -13,5 +13,5 @@ sub MAIN (
         handler => $handler, 
         app => $app,
         env => $env,
-    ).run(%rest);
+    ).run(|%rest);
 }
