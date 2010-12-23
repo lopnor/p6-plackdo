@@ -10,7 +10,7 @@ class Plackdo::HTTP::Message {
 
     multi method new (Plackdo::HTTP::Headers $in, Str $content?) {
         self.bless(
-            self.CREATE(),
+            *,
             :headers($in),
             :content($content)
         );
@@ -32,7 +32,9 @@ class Plackdo::HTTP::Message {
         my $m = Plackdo::HTTP::Message::Grammar.parse(
             $in, actions => Plackdo::HTTP::Message::Actions
         );
-        return $m.ast;
+        my $headers = Plackdo::HTTP::Headers.new(|$m.ast<headers>.hash);
+
+        return self.new($headers, $m.ast<content>);
     }
 }
 

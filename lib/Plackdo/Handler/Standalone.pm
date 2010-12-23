@@ -24,7 +24,7 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
         }
     }
 
-    submethod run ($app) {
+    submethod run (&app) {
         my $server = IO::Socket::INET.socket( PF_INET, SOCK_STREAM, TCP );
         $server.bind( $.host, $.port );
         $server.listen();
@@ -55,7 +55,7 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
                         }
                         %env<psgi.input> = $tmpfile.rewind;
                     }
-                    $res = self.make_response($app(%env));
+                    $res = self.make_response(&app(%env));
                     last;
                 }
             }

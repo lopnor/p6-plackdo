@@ -24,7 +24,10 @@ class Plackdo::URI {
         my $m = Plackdo::URI::Grammar.parse(
             $in, actions => Plackdo::URI::Actions
         );
-        return $m.ast;
+        return self.bless(
+            *,
+            |$m.ast
+        );
     }
 
     method Str() {
