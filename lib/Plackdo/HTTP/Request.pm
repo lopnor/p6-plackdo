@@ -4,8 +4,22 @@ use Plackdo::HTTP::Message;
 class Plackdo::HTTP::Request is Plackdo::HTTP::Message {
     use Plackdo::URI;
 
-    has Str $!request_method;
-    has Plackdo::URI $!uri;
+    has Str $.request_method;
+    has Plackdo::URI $.uri;
+
+    multi method new (*%in) {
+        my $in = %in.pairs[0];
+        my $uri = Plackdo::URI.new($in.value);
+        my $headers = Plackdo::HTTP::Headers.new(
+            Host => $uri.host_port(),
+        );
+        self.bless(
+            *,
+            request_method => $in.key,
+            uri => $uri,
+            headers => $headers,
+        );
+    }
 
     multi method new (Str $method, Str $uri) {
         self.bless(
@@ -26,6 +40,18 @@ class Plackdo::HTTP::Request is Plackdo::HTTP::Message {
             REQUEST_URI => $!uri.Str,
             QUERY_STRING => $!uri.query,
         };
+    }
+
+    method the_request {
+        join(' ', 
+            $.request_method, 
+            ( $.uri.path // '/' ) ~ ($.uri.query ?? '?' ~ $.uri.query !! ''),
+            'HTTP/1.1'
+        );
+    }
+
+    method Str() {
+        join("\n", self.the_request, self.Plackdo::HTTP::Message::Str());
     }
 }
 

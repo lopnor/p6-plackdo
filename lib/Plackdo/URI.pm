@@ -30,13 +30,17 @@ class Plackdo::URI {
         );
     }
 
-    method Str() {
-        $.scheme ~ '://' ~ $.host ~ ( 
+    method host_port {
+        $.host ~ ( 
             ($.scheme eq 'http' && $.port == 80) ?? () !!
             ($.scheme eq 'https' && $.port == 443) ?? () !!
             ':' ~ $.port
         )
-        ~ ( $.path // '' )
+    }
+
+    method Str() {
+        $.scheme ~ '://' ~ self.host_port()
+        ~ ( $.path // '/' )
         ~ ( $.query ?? '?' ~ $.query !! () )
         ~ ( $.fragment ?? '#' ~ $.fragment !! () )
     }

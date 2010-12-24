@@ -15,10 +15,14 @@ module Plackdo::Util {
             }
             $classname.subst(/^\+/,'');
         }
+        say $classname;
         try {
             require $classname;
             CATCH {
-                default {$classname = ''; }
+                default {
+                    say $!;
+                    $classname = ''; 
+                }
             }
         }
         return $classname;

@@ -1,15 +1,15 @@
 use v6;
+use NativeCall;
+sub fork returns Int is native<libc> { ... }
 
 class Plackdo::Test::Standalone {
     use Plackdo::Handler::Standalone;
-    use NativeCall;
     use Plackdo::LWP::UserAgent;
 
-    method !fork returns Int is native<libc> { ... }
 
     method test_p6sgi (Block $app, Block &client) {
         my $pid;
-        if ($pid = fork) {
+        if ($pid = fork()) {
             my &cb = sub ($req) {
                 return Plackdo::LWP::UserAgent.new.request($req);
             };
