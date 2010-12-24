@@ -16,21 +16,36 @@ if ($pid) {
         my $ua = Plackdo::LWP::UserAgent.new;
         my $res = $ua.request($req);
         is $res.WHAT, 'Plackdo::HTTP::Response()';
-        is $res.content, 'Hello, Rakudo';
+        is $res.content, 'GET';
         is $res.code, 200;
         is $res.header('Content-Type'), 'text/plain';
-        is $res.header('Content-Length'), 13;
+        is $res.header('Content-Length'), $res.content.bytes;
+    }
+    {
+        my $req = Plackdo::HTTP::Request.new(
+            POST => 'http://localhost:5000/',
+            headers => {Content-Type => 'application/x-www-form-urlencoded'},
+            content => 'foo=bar',
+        );
+        my $ua = Plackdo::LWP::UserAgent.new;
+        my $res = $ua.request($req);
+        is $res.WHAT, 'Plackdo::HTTP::Response()';
+        is $res.content, 'POST';
+        is $res.code, 200;
+        is $res.header('Content-Type'), 'text/plain';
+        is $res.header('Content-Length'), $res.content.bytes;
     }
 } else {
     my $handler = Plackdo::Handler::Standalone.new;
     $handler.run( sub (%env) {
+        my $res = %env<REQUEST_METHOD>;
         return [
             200, 
             [ 
                 Content-Type => 'text/plain',
-                Content-Length => 13,
+                Content-Length => $res.bytes,
             ],
-            [ 'Hello, Rakudo' ]
+            [ $res ]
         ];
     });
 }

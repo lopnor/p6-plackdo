@@ -15,7 +15,6 @@ module Plackdo::Util {
             }
             $classname.subst(/^\+/,'');
         }
-        say $classname;
         try {
             require $classname;
             CATCH {
