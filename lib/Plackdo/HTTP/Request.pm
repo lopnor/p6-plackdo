@@ -8,16 +8,22 @@ class Plackdo::HTTP::Request is Plackdo::HTTP::Message {
     has Plackdo::URI $.uri;
 
     multi method new (*%in) {
+        my $headers_in = %in.delete(<headers>);
+        my $content = %in.delete(<content>);
         my $in = %in.pairs[0];
         my $uri = Plackdo::URI.new($in.value);
         my $headers = Plackdo::HTTP::Headers.new(
             Host => $uri.host_port(),
         );
+        if ($headers_in) {
+            $headers.header(|$headers_in);
+        }
         self.bless(
             *,
             request_method => $in.key,
             uri => $uri,
             headers => $headers,
+            content => $content,
         );
     }
 
@@ -51,6 +57,7 @@ class Plackdo::HTTP::Request is Plackdo::HTTP::Message {
     }
 
     method Str() {
+        if ($.content) { self.header(Content-Length => $.content.bytes) }
         join("\n", self.the_request, self.Plackdo::HTTP::Message::Str());
     }
 }

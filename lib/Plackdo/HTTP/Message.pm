@@ -27,7 +27,7 @@ class Plackdo::HTTP::Message::Actions {
 class Plackdo::HTTP::Message {
     use Plackdo::HTTP::Headers;
 
-    has Plackdo::HTTP::Headers $!headers;
+    has Plackdo::HTTP::Headers $.headers;
     has Str $.content;
 
     multi method new (Plackdo::HTTP::Headers $in, Str $content?) {

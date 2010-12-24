@@ -15,6 +15,17 @@ ok 1;
     is $uri, 'http://localhost/foobar?fuga#hoge'
 }
 {
+    ok my $uri = Plackdo::URI.new('http://www.sample.com:8080/foobar?fuga#hoge');
+    isa_ok $uri, Plackdo::URI;
+    is $uri.scheme, 'http';
+    is $uri.host, 'www.sample.com';
+    is $uri.port, 8080;
+    is $uri.path, '/foobar';
+    is $uri.query, 'fuga';
+    is $uri.fragment, 'hoge';
+    is $uri, 'http://www.sample.com:8080/foobar?fuga#hoge'
+}
+{
     ok my $uri = Plackdo::URI.new('https://localhost/foobar?fuga#hoge');
     isa_ok $uri, Plackdo::URI;
     is $uri.scheme, 'https';
@@ -82,6 +93,17 @@ ok 1;
     $uri.port = 8080;
     $uri.path = '/';
     is ~$uri, "http://localhost:8080/";
+}
+{
+    ok my $uri = Plackdo::URI.new('/foobar?fuga#hoge');
+    isa_ok $uri, Plackdo::URI;
+    is $uri.scheme, '';
+    is $uri.host, '';
+    is $uri.port.WHAT, 'Any()';
+    is $uri.path, '/foobar';
+    is $uri.query, 'fuga';
+    is $uri.fragment, 'hoge';
+    is $uri, '/foobar?fuga#hoge'
 }
 
 done_testing;

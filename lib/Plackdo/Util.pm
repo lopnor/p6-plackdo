@@ -7,7 +7,7 @@ module Plackdo::Util {
         return eval "{$loaded_class}.new";
     }
 
-    sub load_class ($class is rw, $prefix) is export {
+    sub load_class ($class, $prefix) is export {
         my $classname = $class;
         if $prefix  {
             unless ($class ~~ m/^\+/ || $class ~~ m/^$prefix/) {

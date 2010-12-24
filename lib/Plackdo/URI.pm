@@ -1,9 +1,29 @@
 use v6;
 
-class Plackdo::URI {
-    use Plackdo::URI::Grammar;
-    use Plackdo::URI::Actions;
+grammar Plackdo::URI::Grammar {
+    regex TOP { ^ [ <scheme> '://' <host> [':'<port>]? ]? <path_part> $ }
+    token scheme { <[a..z0..9]>+ }
+    token host   { <[a..z0..9\-\.]>+ }
+    token port   { \d+ }
+    token path_part { <path=.str> [ \? <query=.str> ]? [ \# <frag=.str> ]? }
+    token str    { <-[\?\#]>+ }
+}
 
+class Plackdo::URI::Actions {
+
+    method TOP ($/) { 
+        make { 
+            scheme   => $<scheme>.Str,
+            host     => $<host>.Str,
+            $<port> ?? port => $<port>[0].Str !! (),
+            path     => $<path_part><path>.Str,
+            query    => $<path_part><query>.Str,
+            fragment => $<path_part><frag>.Str,
+        };
+    }
+}
+
+class Plackdo::URI {
     has $.scheme is rw;
     has $.host is rw;
     has $.port is rw;
@@ -24,13 +44,11 @@ class Plackdo::URI {
         my $m = Plackdo::URI::Grammar.parse(
             $in, actions => Plackdo::URI::Actions
         );
-        return self.bless(
-            *,
-            |$m.ast
-        );
+        return self.new(|$m.ast);
     }
 
     method host_port {
+        $.host or return;
         $.host ~ ( 
             ($.scheme eq 'http' && $.port == 80) ?? () !!
             ($.scheme eq 'https' && $.port == 443) ?? () !!
@@ -39,7 +57,8 @@ class Plackdo::URI {
     }
 
     method Str() {
-        $.scheme ~ '://' ~ self.host_port()
+        my $host_port = self.host_port();
+        ( $host_port ?? ($.scheme ~ '://' ~ $host_port) !! () )
         ~ ( $.path // '/' )
         ~ ( $.query ?? '?' ~ $.query !! () )
         ~ ( $.fragment ?? '#' ~ $.fragment !! () )
