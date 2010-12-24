@@ -15,6 +15,10 @@ if ($pid) {
     my $ua = Plackdo::LWP::UserAgent.new;
     my $res = $ua.request($req);
     is $res.WHAT, 'Plackdo::HTTP::Response()';
+    is $res.content, 'Hello, Rakudo';
+    is $res.code, 200;
+    is $res.header('Content-Type'), 'text/plain';
+    is $res.header('Content-Length'), 13;
 } else {
     my $handler = Plackdo::Handler::Standalone.new;
     $handler.run( sub (%env) {
