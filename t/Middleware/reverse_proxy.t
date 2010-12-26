@@ -18,13 +18,13 @@ test_p6sgi(
             GET => 'http://localhost:5000/foo',
             headers => {
                 X-Forwarded-For => '192.168.0.1',
-                X-Forwarded-Host => 'proxy.example.com',
+                X-Forwarded-Host => 'foobar.proxy.example.com',
             },
         );
         my $res = &cb($req);
         ok $res;
         my %env = $res.content.eval;
-        is %env<HTTP_HOST>, 'proxy.example.com';
+        is %env<HTTP_HOST>, 'foobar.proxy.example.com';
         is %env<SERVER_PORT>, 80;
     }
 );

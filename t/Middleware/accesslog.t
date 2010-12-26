@@ -24,7 +24,7 @@ test_p6sgi(
 $fh.close;
 
 ok my $log = slurp $logfile;
-ok $log ~~ /"GET\ \/foo\ HTTP\/1.1"/;
+ok $log ~~ /'"GET /foo HTTP/1.1" 200 13'/;
 
 ok unlink($logfile);
 

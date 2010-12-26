@@ -8,13 +8,13 @@ class Plackdo::Middleware::ReverseProxy does Plackdo::Middleware {
         my $default_port = 80;
 
         given %env<HTTP_X_FORWARDED_FOR> {
-            when m/(<-[\,\s]>+)$/ {
+            when m/(<-[,\ ]>+)$/ {
                 %env<REMOTE_ADDR> = $/[0].Str;
             }
         }
 
         given %env<HTTP_X_FORWARDED_HOST> {
-            when m/(<-[\,\s]>+)$/ {
+            when m/(<-[,\ ]>+)$/ {
                 my $host = $/[0].Str;
                 %env<SERVER_HOST> = %env<HTTP_HOST> = $host;
             }
