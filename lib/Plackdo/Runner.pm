@@ -5,10 +5,15 @@ class Plackdo::Runner {
     has Str $!app = 'app.p6sgi';
     has Str $!handler = 'Standalone';
     has Str $!env = 'development';
+    has @.middleware;
 
     method run (*%args) {
         my $handler = self.load_handler(|%args);
         my $app = self.load_app();
+        for @.middleware -> $name {
+            my $mw = load_instance($name, 'Plackdo::Middleware') or next;
+            $app = $mw.wrap($app);
+        }
         if ($!env eq 'development') {
             my $mw = load_instance('AccessLog', 'Plackdo::Middleware');
             $app = $mw.wrap($app);

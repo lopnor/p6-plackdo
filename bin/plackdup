@@ -7,11 +7,14 @@ sub MAIN (
     :$handler = 'Standalone', 
     :$app = 'app.p6sgi',
     :$env = 'development',
+    :$middleware = '',
     *%rest
 ) {
+    my @m = $middleware.split(',');
     Plackdo::Runner.new(
         handler => $handler, 
         app => $app,
         env => $env,
+        middleware => @m,
     ).run(|%rest);
 }
