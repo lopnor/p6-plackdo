@@ -1,5 +1,8 @@
 - testing
--- standalone handler
+-- check open port for standalone server
+-- post request test
+-- lwp post request
 - middleware
 -- reverse proxy
 -- accesslog
+- ssl for lwp

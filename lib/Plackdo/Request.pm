@@ -51,11 +51,11 @@ class Plackdo::Request {
     }
 
     method param ($name) {
-        return self.parameters.{$name};
+        return self.parameters{$name};
     }
 
     method upload ($name) {
-        return self.uploads.{$name};
+        return self.uploads{$name};
     }
 
     submethod DESTORY {

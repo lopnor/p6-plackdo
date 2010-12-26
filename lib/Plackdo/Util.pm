@@ -19,7 +19,6 @@ module Plackdo::Util {
             require $classname;
             CATCH {
                 default {
-                    say $!;
                     $classname = ''; 
                 }
             }
@@ -33,6 +32,28 @@ module Plackdo::Util {
             +@pair == 2 or next;
             %hash{@pair[0]} = unescape( @pair[1] );
         }
+    }
+
+    our sub header_get (@in, Str $key is copy) {
+        my @val;
+        $key .= lc;
+        for @in -> $p {
+            @val.push($p.value) if $p.key.lc eq $key;
+        }
+        return @val but @val[0];
+    }
+
+    our sub header_set (@in, Str $key, Str $value) {
+        my $lckey = $key.lc;
+        my $set = 0;
+        for @in -> $p {
+            if ($p.key.lc eq $lckey) {
+                next if $set;
+                $p.value = $value;
+                $set++;
+            }
+        }
+        @in.push($key => $value) unless $set;
     }
 
     # from November::CGI
