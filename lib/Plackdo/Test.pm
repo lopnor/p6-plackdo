@@ -16,7 +16,6 @@ module Plackdo::Test {
     }
 
     multi sub new_request (Hash %in) is export {
-        say 'here';
         Plackdo::HTTP::Request.new(|%in);
     }
 

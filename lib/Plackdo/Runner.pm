@@ -9,6 +9,10 @@ class Plackdo::Runner {
     method run (*%args) {
         my $handler = self.load_handler(|%args);
         my $app = self.load_app();
+        if ($!env eq 'development') {
+            my $mw = load_instance('AccessLog', 'Plackdo::Middleware');
+            $app = $mw.wrap($app);
+        }
         $handler.run($app);
     }
 

@@ -1,6 +1,9 @@
 use v6;
+use Plackdo::Builder;
+use Plackdo::Middleware::XFramework;
 
-sub (%env) {
+
+my $app = sub (%env) {
     return (
         200,
         [ 
@@ -9,5 +12,10 @@ sub (%env) {
         ],
         [ %env.perl ]
     );
-}
+};
+my $builder = Plackdo::Builder.new;
+$builder.add_middleware(
+    Plackdo::Middleware::XFramework.new(framework => 'foobar')
+);
+$builder.to_app($app);
 # vim: ft=perl6

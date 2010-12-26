@@ -4,12 +4,12 @@ role Plackdo::Component {
 
     method prepare_app { return }
 
-    method call (&env) { ... }
+    method call (%env) { ... }
 
     method to_app (*@args) {
         self.prepare_app;
-
-        return sub (%env) { self.call(%env) };
+        my &app = sub (%env) { self.call(%env) };
+        return &app;
     }
 
     method response_cb ($res, &cb) {

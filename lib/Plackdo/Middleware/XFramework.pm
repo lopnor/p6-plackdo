@@ -9,7 +9,6 @@ class Plackdo::Middleware::XFramework does Plackdo::Middleware {
     method call (%env) {
         my $res = &!app(%env);
         self.response_cb($res, sub ($in) {
-            $in.perl.say;
             if ($.framework) {
                 Plackdo::Util::header_set($in[1], 
                     'X-Framework', $.framework
@@ -17,6 +16,7 @@ class Plackdo::Middleware::XFramework does Plackdo::Middleware {
             }
             return $in;
         });
+        return $res;
     }
 }
 
