@@ -36,16 +36,24 @@ class Plackdo::HTTP::Request is Plackdo::HTTP::Message {
     }
 
     method to_p6sgi {
-        return {
+        my %env = {
             REQUEST_METHOD => $!request_method,
             SCRIPT_NAME => '',
             PATH_INFO => $!uri.path,
             SERVER_PORT => $!uri.port,
             SERVER_ADDR => $!uri.host,
-            SERVER_PROTOCOL => $!uri.scheme,
+            SERVER_PROTOCOL => 'HTTP/1.1',
             REQUEST_URI => $!uri.Str,
             QUERY_STRING => $!uri.query,
         };
+        for $.headers.pairs -> $p {
+            my $key = $p.key.uc.subst('-', '_', :g);
+            unless ( $key eq any <CONTENT_TYPE CONTENT_LENGTH> ) {
+                $key = 'HTTP_'~$key
+            }
+            %env{$key} = $p.value;
+        }
+        return %env;
     }
 
     method the_request {

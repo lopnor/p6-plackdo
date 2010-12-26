@@ -59,6 +59,10 @@ class Plackdo::HTTP::Headers {
         }
     }
 
+    method pairs {
+        %!headers.clone.pairs;
+    }
+
     method sorted_field_names {
         return %!headers.keys.sort( 
             { %header_order{ $^a } <=> %header_order{ $^b } } 
