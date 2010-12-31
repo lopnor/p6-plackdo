@@ -9,7 +9,7 @@ class Foobar {
     }
 
     method handle_request (%env) {
-        my $req = Plackdo::Request.new(env => %env);
+        my $req = Plackdo::Request.new(|%env);
 #        my $fh = %env.delete('psgi.input');
 #        my $body = $fh ?? $fh.slurp !! '';
         my $content = "<html>"

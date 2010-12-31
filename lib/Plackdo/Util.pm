@@ -26,7 +26,7 @@ module Plackdo::Util {
         return $classname;
     }
 
-    sub str_to_hash ($str, %hash) is export {
+    sub str_to_hash (Str $str, %hash) is export {
         for $str.split('&') -> $item {
             my @pair = $item.split('=');
             +@pair == 2 or next;

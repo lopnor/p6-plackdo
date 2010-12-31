@@ -33,7 +33,7 @@ ok 1;
 }
 {
     ok my $runner = Plackdo::Runner.new(
-        app => 't/Runner/test.p6sgi'
+        app => 't/Plackdo-Runner/test.p6sgi'
     );
     ok my $app = $runner.load_app;
     is $app.WHAT, 'Sub()';

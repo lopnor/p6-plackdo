@@ -3,6 +3,6 @@
 -- post request test
 -- lwp post request
 - middleware
--- reverse proxy
--- accesslog
+-- static
+-- auth::basic
 - ssl for lwp

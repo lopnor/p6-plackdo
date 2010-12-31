@@ -5,7 +5,7 @@ use Plackdo::Middleware::AccessLog;
 
 ok 1;
 
-my $logfile = 't/Middleware/log';
+my $logfile = 't/Plackdo-Middleware/log';
 my $fh = open($logfile, :w);
 
 my $app = sub (%env) {

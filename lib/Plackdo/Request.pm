@@ -1,11 +1,24 @@
 use v6;
-use Plackdo::Util;
-use Plackdo::TempBuffer::File;
 
 class Plackdo::Request {
+    use Plackdo::Util;
+    use Plackdo::TempBuffer::File;
+    use Plackdo::URI;
+
     has %!env;
     has %!params;
     has %!uploads;
+
+    multi method new (*%in) {
+        self.bless(
+            *,
+            env => %in
+        );
+    }
+
+    method uri {
+        return Plackdo::URI.new(%!env<REQUEST_URI>);
+    }
 
     method parameters {
         self!parse_parameters unless %!params;
@@ -18,7 +31,7 @@ class Plackdo::Request {
     }
 
     method !parse_query_parameters {
-        str_to_hash(%!env<QUERY_STRING>, %!params);
+        str_to_hash(%!env<QUERY_STRING> // '', %!params);
     }
 
     method !parse_body_parameters {

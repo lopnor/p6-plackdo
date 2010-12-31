@@ -15,6 +15,12 @@ ok 1;
 }
 {
     my $headers = ['foo' => 'bar', 'hoge' => 'fuga', 'FOO' => 'baz'];
+    ok my $str = Plackdo::Util::header_get($headers, 'FOO');
+    is $str[0], 'bar';
+    is $str[1], 'baz';
+}
+{
+    my $headers = ['foo' => 'bar', 'hoge' => 'fuga', 'FOO' => 'baz'];
     ok (my @ret = Plackdo::Util::header_get($headers, 'FOO'));
     is @ret[0], 'bar';
     is @ret[1], 'baz';
