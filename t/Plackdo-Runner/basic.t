@@ -38,6 +38,20 @@ ok 1;
     ok my $app = $runner.load_app;
     is $app.WHAT, 'Sub()';
 }
+{
+    ok my $runner = Plackdo::Runner.new(
+        app => 't/Plackdo-Runner/fail.p6sgi'
+    );
+    my $app = $runner.load_app;
+    is $app.WHAT, 'Failure()'; 
+}
+{
+    ok my $runner = Plackdo::Runner.new(
+        app => 't/Plackdo-Runner/nonexisting.p6sgi'
+    );
+    my $app = $runner.load_app;
+    is $app.WHAT, 'Any()'; 
+}
 
 done_testing;
 # vim: ft=perl6 :

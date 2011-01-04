@@ -9,7 +9,7 @@ class Plackdo::Runner {
 
     method run (*%args) {
         my $handler = self.load_handler(|%args);
-        my $app = self.load_app();
+        my $app = self.load_app() or die 'could not load p6sgi file';
         for @.middleware -> $name {
             my $mw = load_instance($name, 'Plackdo::Middleware') or next;
             $app = $mw.wrap($app);

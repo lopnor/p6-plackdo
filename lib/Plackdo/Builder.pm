@@ -9,7 +9,7 @@ class Plackdo::Builder {
         @!middleware.push($middleware);
     }
 
-    method to_app (&app is rw) {
+    method to_app (&app is copy) {
         for @!middleware -> $m {
             &app = $m.wrap(&app);
         }

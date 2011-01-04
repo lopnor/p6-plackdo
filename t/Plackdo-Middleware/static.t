@@ -27,6 +27,13 @@ test_p6sgi(
             is $res.code, 404;
         }
         {
+            my $req = new_request('GET', '/static/foobar.txt');
+            my $res = &cb($req);
+            is $res.code, 200;
+            is $res.header('Content-Type'), 'text/plain; charset=utf-8';
+            is $res.content, "foobar\n";
+        }
+        {
             my $file = 't/Plackdo-Middleware/static/lopnor.png';
             my $req = new_request('GET', '/static/lopnor.png');
             my $res = &cb($req);

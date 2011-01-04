@@ -8,7 +8,7 @@ class Plackdo::Middleware::Static does Plackdo::Middleware {
     has $!root = '.';
     has $!path;
     has $!file_app;
-    has $!encoding;
+    has $!encoding = 'utf-8';
 
     method call (%env) {
         my $res = self.handle_static(%env);

@@ -70,10 +70,15 @@ class Plackdo::App::File does Plackdo::Component {
         }
 
         my $io = $path.IO;
-        my $fh = IO.new.open($path, :r, :bin);
         my $content;
-        until $fh.eof {
-            $content ~= [~]$fh.read(4096).contents>>.chr;
+        try {
+            $content = slurp $path;
+            CATCH {
+                my $fh = IO.new.open($path, :r, :bin);
+                until $fh.eof {
+                    $content ~= [~]$fh.read(4096).contents>>.chr;
+                }
+            }
         }
 
         return [
