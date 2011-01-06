@@ -9,22 +9,34 @@ my $logfile = 't/Plackdo-Middleware/log';
 my $fh = open($logfile, :w);
 
 my $app = sub (%env) {
-    return [ 200, [ Content-Type => 'text/plain' ], ['Hello, Rakudo']]
+    if (%env<REQUEST_METHOD>.lc eq 'get') {
+        return [ 200, [ Content-Type => 'text/plain' ], ['Hello, Rakudo']]
+    } else {
+        return [ 200, [], [] ]
+    }
 };
 $app = Plackdo::Middleware::AccessLog.new( io => $fh ).wrap($app);
 
 test_p6sgi(
     $app,
     sub (&cb) {
-        my $req = new_request('GET', '/foo');
-        my $res = &cb($req);
-        is $res.code, 200;
+        {
+            my $req = new_request('GET', '/foo');
+            my $res = &cb($req);
+            is $res.code, 200;
+        }
+        {
+            my $req = new_request('HEAD', '/foo');
+            my $res = &cb($req);
+            is $res.code, 200;
+        }
     }
 );
 $fh.close;
 
 ok my $log = slurp $logfile;
 ok $log ~~ /'"GET /foo HTTP/1.1" 200 13'/;
+ok $log ~~ /'"HEAD /foo HTTP/1.1" 200 -'/;
 
 ok unlink($logfile);
 
