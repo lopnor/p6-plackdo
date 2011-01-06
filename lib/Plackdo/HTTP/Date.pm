@@ -2,12 +2,12 @@ use v6;
 
 module Plackdo::HTTP::Date {
 
-    my @DoW = <Sun Mon Tue Wed Thu Fri Sat>;
+    my @DoW = <Sun Mon Tue Wed Thu Fri Sat Sun>;
     my @MoY = <Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec>;
     
-    multi sub time2str (DateTime $d? is copy) is export {
-        $d //= DateTime.now;
-        my $utc = $d.utc;
+    sub time2str ($d? is copy) is export {
+        $d //= now;
+        my $utc = DateTime.new($d).utc;
         return sprintf('%s, %02d %s %04d %02d:%02d:%02d GMT',
             @DoW[$utc.day-of-week],
             $utc.day-of-month,
@@ -16,7 +16,6 @@ module Plackdo::HTTP::Date {
             $utc.hour, $utc.minute, $utc.second
         );
     }
-
 }
 
 # vim: ft=perl6 :

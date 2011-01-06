@@ -2,11 +2,13 @@ use v6;
 use Plackdo::Component;
 
 class Plackdo::App::File does Plackdo::Component {
+    use Plackdo::Util;
     use Plackdo::MIME;
     use Plackdo::HTTP::Date;
 
     has $!root = '.';
     has $!encoding = 'utf-8';
+    has $!conditional_get = 1;
 
     method call (%env is copy) {
         my ($file, $path_info) = self.locate_file(%env);
@@ -70,6 +72,26 @@ class Plackdo::App::File does Plackdo::Component {
         }
 
         my $io = $path.IO;
+
+        my $last_modified = time2str($io.changed);
+        my $header = [
+            Content-Type => $content_type,
+            Content-Length => $io.stat.size,
+            Last-Modified => $last_modified,
+        ];
+
+        if (%env<REQUEST_METHOD>.lc eq 'head') {
+            return [200, $header, []];
+        }
+
+        if ($!conditional_get) {
+            given %env<HTTP_IF_MODIFIED_SINCE>//'' {
+                when $last_modified {
+                    return [304, [Last-Modified => $last_modified], []];
+                }
+            }
+        }
+
         my $content;
         try {
             $content = slurp $path;
@@ -81,15 +103,7 @@ class Plackdo::App::File does Plackdo::Component {
             }
         }
 
-        return [
-            200,
-            [
-                Content-Type => $content_type,
-                Content-Length => $io.stat.size,
-                Last-Modified => time2str(DateTime.new($io.stat.changetime)),
-            ],
-            [ $content ]
-        ];
+        return [ 200, $header, [ $content ] ];
     }
 
     method should_handle ($path) {

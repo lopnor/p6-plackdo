@@ -9,6 +9,7 @@ class Plackdo::Middleware::Static does Plackdo::Middleware {
     has $!path;
     has $!file_app;
     has $!encoding = 'utf-8';
+    has $!conditional_get = 1;
 
     method call (%env) {
         my $res = self.handle_static(%env);
@@ -23,6 +24,7 @@ class Plackdo::Middleware::Static does Plackdo::Middleware {
         $!file_app //= Plackdo::App::File.new(
             root => $!root,
             encoding => $!encoding,
+            conditional_get => $!conditional_get,
         );
 
         return $!file_app.call(%env);
