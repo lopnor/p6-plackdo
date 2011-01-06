@@ -3,7 +3,7 @@ use Plackdo::Component;
 
 role Plackdo::Middleware does Plackdo::Component {
 
-    has &!app is rw;
+    has &!app;
 
     method wrap (&app) {
         &!app = &app;
