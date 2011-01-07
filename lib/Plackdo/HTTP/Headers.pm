@@ -65,14 +65,18 @@ class Plackdo::HTTP::Headers {
 
     method sorted_field_names {
         return %!headers.keys.sort( 
-            { %header_order{ $^a } <=> %header_order{ $^b } } 
+            { (%header_order{ $^a } || 999) <=> (%header_order{ $^b } || 999) } 
         );
     }
 
     method Str() {
         my $out;
         for self.sorted_field_names -> $key {
-            $out ~= sprintf("%s: %s\n", %standard_case{$key}, %!headers.{ $key });
+            $out ~= sprintf(
+                "%s: %s\n", 
+                (%standard_case{$key} // $key), 
+                %!headers.{ $key }
+            );
         }
         return $out;
     }

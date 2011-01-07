@@ -1,18 +1,18 @@
 use v6;
 use Plackdo::Handler;
-use Plackdo::TempBuffer::Memory;
 
 sub PF_INET {2}
 sub SOCK_STREAM {1}
 sub TCP {6}
 
-my %status = 
-    200 => 'OK',
-    500 => 'Internal Server Error';
-
 class Plackdo::Handler::Standalone does Plackdo::Handler {
+    use Plackdo::HTTP::Status;
+    use Plackdo::HTTP::Request;
+    use Plackdo::TempBuffer::Memory;
+
     has Str $.host is rw = '0.0.0.0';
     has Int $.port is rw = 5000;
+
 
     method set_attr (*%args) {
         for %args.pairs {
@@ -63,9 +63,35 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
             $conn.close;
             $tmpfile.unlink if $tmpfile;
         }
-   }
+    }
 
     method parse_request ($chunk, %env) {
+        my $m = Plackdo::HTTP::Request::Grammar.parse(
+            $chunk, actions => Plackdo::HTTP::Request::Actions
+        );
+        $m or return -2;
+        my $uri = Plackdo::URI.new($m.ast<uri>);
+
+        %env<SCRIPT_NAME> = '';
+        %env<PATH_INFO> = $uri.path;
+        %env<SERVER_PORT> = $.port;
+        %env<SERVER_ADDR> = $.host;
+        %env<SERVER_PROTOCOL> = $m<the_request><protocol>.Str;
+        %env<REQUEST_METHOD> = $m.ast<method>;
+        %env<REQUEST_URI> = ~$uri;
+        %env<QUERY_STRING> = $uri.query;
+
+        for $m.ast<headers>.hash -> $p {
+            my $key = $p.key.uc.subst('-', '_', :g);
+            if ( $key !~~ any <CONTENT_TYPE CONTENT_LENGTH> ) {
+                $key = 'HTTP_'~$key
+            }
+            %env{$key} = $p.value;
+        }
+        return $m<eoh>.to;
+    }
+
+    method _parse_request ($chunk, %env) {
         my $pred = $chunk ~~ m/^(\r?\n)+/ and $/.[0] // '';
         my $head = $chunk.subst(/^(\r?\n)+/, '');
         $head ~~ / ^(.*?)\r?\n\r?\n / or return -2;
@@ -104,7 +130,11 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
         }
 
         return join("\r\n",
-            join(' ', "HTTP/1.0", $status, %status{$status}),
+            join(' ', 
+                "HTTP/1.0", 
+                $status, 
+                Plackdo::HTTP::Status.status_message($status)
+            ),
             $headers,
             [~]@args[2]
         );
