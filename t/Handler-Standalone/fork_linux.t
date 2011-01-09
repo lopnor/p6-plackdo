@@ -6,14 +6,14 @@ use Plackdo::Handler::Standalone;
 
 plan 2;
 
-if $*OS ne 'darwin' {
-    skip_rest 'fork for darwin test';
+if $*OS ne 'linux' {
+    skip_rest('fork for linux test');
     exit;
 }
 
 ok 1;
 
-sub fork returns Int is native<libc> { ... }
+sub fork returns Int is native('') { ... }
 
 my $pid = fork();
 if ($pid) {
