@@ -1,6 +1,6 @@
 use v6;
 
-class Plackdo::Test::Standalone {
+role Plackdo::Test::Standalone {
     use Plackdo::Handler::Standalone;
     use Plackdo::LWP::UserAgent;
 
