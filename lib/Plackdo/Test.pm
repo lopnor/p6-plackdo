@@ -7,7 +7,11 @@ module Plackdo::Test {
     our $Impl ||= %*ENV<PLACKDO_TEST_IMPL> || 'MockHTTP';
 
     multi sub test_p6sgi (&app, &client) is export {
-        my $obj = load_instance($Impl, 'Plackdo::Test');
+        my $impl = $Impl;
+        if ($impl eq 'Standalone') {
+            $impl ~= '::'~ $*OS.ucfirst;
+        }
+        my $obj = load_instance($impl, 'Plackdo::Test');
         $obj.test_p6sgi(&app, &client);
     }
 
