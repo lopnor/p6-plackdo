@@ -20,6 +20,10 @@ class Plackdo::Request {
         return Plackdo::URI.new(%!env<REQUEST_URI>);
     }
 
+    method request_method {
+        return %!env<REQUEST_METHOD>;
+    }
+
     method parameters {
         self!parse_parameters unless %!params;
         return %!params;
