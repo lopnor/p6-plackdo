@@ -18,7 +18,7 @@ class Plackdo::Runner {
             my $mw = load_instance('AccessLog', 'Plackdo::Middleware');
             $app = $mw.wrap($app);
             $handler.server_ready = sub {
-                say 'ready for access on' ~ $handler.host ~ ':' ~ $handler.port 
+                say( 'ready for access on ' ~ $handler.host ~ ':' ~ $handler.port );
             };
         }
         $handler.run($app);

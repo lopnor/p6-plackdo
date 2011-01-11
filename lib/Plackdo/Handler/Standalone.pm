@@ -12,7 +12,7 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
 
     has Str $.host is rw = '0.0.0.0';
     has Int $.port is rw = 5000;
-    has &.server_ready = sub {};
+    has &.server_ready is rw = sub {};
     has $!listen_sock;
 
     method set_attr (*%args) {
@@ -21,6 +21,7 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
             given .key {
                 when 'host' {$.host = $value}
                 when 'port' {$.port = $value}
+                when 'server_ready' {&.server_ready = $value}
             }
         }
     }
@@ -37,7 +38,7 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
         }
         $sock.listen();
         $!listen_sock = $sock;
-        &.server_ready();
+        &.server_ready.();
     }
 
     method make_socket ($host, $port) {
