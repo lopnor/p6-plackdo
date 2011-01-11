@@ -22,8 +22,9 @@ test_p6sgi(
     sub (&cb) {
         {
             my $req = Plackdo::HTTP::Request.new('GET', 'http://localhost:5000/');
-            my $ua = Plackdo::LWP::UserAgent.new;
-            my $res = $ua.request($req);
+            my $res  = &cb($req);
+#            my $ua = Plackdo::LWP::UserAgent.new;
+#            my $res = $ua.request($req);
             is $res.WHAT, 'Plackdo::HTTP::Response()';
             is $res.content, 'GET';
             is $res.code, 200;
@@ -36,8 +37,9 @@ test_p6sgi(
                 headers => {Content-Type => 'application/x-www-form-urlencoded'},
                 content => 'foo=bar',
             );
-            my $ua = Plackdo::LWP::UserAgent.new;
-            my $res = $ua.request($req);
+            my $res = &cb($req);
+#            my $ua = Plackdo::LWP::UserAgent.new;
+#            my $res = $ua.request($req);
             is $res.WHAT, 'Plackdo::HTTP::Response()';
             is $res.content, 'POST';
             is $res.code, 200;

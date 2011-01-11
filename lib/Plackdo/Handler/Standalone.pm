@@ -12,7 +12,8 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
 
     has Str $.host is rw = '0.0.0.0';
     has Int $.port is rw = 5000;
-
+    has &.server_ready = sub {};
+    has $!listen_sock;
 
     method set_attr (*%args) {
         for %args.pairs {
@@ -24,13 +25,38 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
         }
     }
 
-    submethod run (&app) {
-        my $server = IO::Socket::INET.socket( PF_INET, SOCK_STREAM, TCP );
-        $server.bind( $.host, $.port );
-        $server.listen();
+    method run (&app) {
+        self.setup_listener;
+        self.accept_loop(&app);
+    }
 
-        say "ready for access on http://{$.host}:{$.port}/";
-        while my $conn = $server.accept() {
+    method setup_listener {
+        my $sock = self.make_socket( $.host, $.port );
+        unless ($sock) {
+            die "could not bind to {$.host}:{$.port}";
+        }
+        $sock.listen();
+        $!listen_sock = $sock;
+        &.server_ready();
+    }
+
+    method make_socket ($host, $port) {
+        my $sock = IO::Socket::INET.socket( PF_INET, SOCK_STREAM, TCP );
+
+        # IO::Socket::INET.bind doesn't return result 
+        my $attr = $sock.^attributes(:local).grep({ .name eq '$!PIO'})[0];
+        my $pio = $attr.get_value($sock);
+        my $sockaddr = $pio.sockaddr( $host, $port );
+        my $result = $pio.bind($sockaddr);
+#        $sock.bind( $.host, $.port );
+        if ($result == 0) {
+            return $sock;
+        }
+        return;
+    }
+
+    method accept_loop (&app) { 
+        while my $conn = $!listen_sock.accept() {
             my %env;
             my $res;
             my $buf;
@@ -89,37 +115,6 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
             %env{$key} = $p.value;
         }
         return $m<eoh>.to;
-    }
-
-    method _parse_request ($chunk, %env) {
-        my $pred = $chunk ~~ m/^(\r?\n)+/ and $/.[0] // '';
-        my $head = $chunk.subst(/^(\r?\n)+/, '');
-        $head ~~ / ^(.*?)\r?\n\r?\n / or return -2;
-        $head = $/;
-        my @lines = $head.split(/\r?\n/);
-        my ($method, $uri, $proto) = @lines.shift.split(' ');
-        my ($path, $query_string) = $uri.split('?');
-        $query_string = '' if $query_string !~~ Str;
-
-        %env<SCRIPT_NAME> = '';
-        %env<PATH_INFO> = $path;
-        %env<SERVER_PORT> = $.port;
-        %env<SERVER_ADDR> = $.host;
-        %env<SERVER_PROTOCOL> = $proto;
-        %env<REQUEST_METHOD> = $method;
-        %env<REQUEST_URI> = $uri;
-        %env<QUERY_STRING> = $query_string;
-
-        for @lines -> $line {
-            my ($key, $value) = $line.split(/\:\s+/);
-            $key or next;
-            $key = $key.uc.subst('-', '_', :g);
-            unless ( $key eq any <CONTENT_TYPE CONTENT_LENGTH> ) {
-                $key = 'HTTP_'~$key
-            }
-            %env{$key} = $value;
-        }
-        return $head.chars + $pred.chars;
     }
 
     method make_response (@args) {
