@@ -29,6 +29,6 @@ use Plackdo::HTTP::Headers;
 
 
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

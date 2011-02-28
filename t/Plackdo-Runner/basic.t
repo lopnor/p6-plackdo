@@ -29,7 +29,8 @@ ok 1;
     is $handler.WHAT, 'Plackdo::Handler::Standalone()';
     is $handler.host, '0.0.0.0';
     is $handler.port, 5000;
-    dies_ok $runner.load_app;
+    ok ! $runner.load_app;
+#    dies_ok { $runner.load_app };
 }
 {
     ok my $runner = Plackdo::Runner.new(
@@ -53,5 +54,5 @@ ok 1;
     is $app.WHAT, 'Any()'; 
 }
 
-done_testing;
+done;
 # vim: ft=perl6 :

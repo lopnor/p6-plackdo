@@ -27,6 +27,6 @@ ok 1;
     is $req.parameters.perl, q!{"foo" => "bar", "baz" => "hoge"}!;
 }
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

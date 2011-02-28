@@ -12,6 +12,6 @@ is type("foo.GIF"), "image/gif";
 ok type("foo.bar") ~~ Mu;
 is type("foo.mp3"), "audio/mpeg";
 
-done_testing;
+done;
 
 # vim: ft=perl6

@@ -1,14 +1,11 @@
 use v6;
 use Plackdo::Handler;
 
-sub PF_INET {2}
-sub SOCK_STREAM {1}
-sub TCP {6}
-
 class Plackdo::Handler::Standalone does Plackdo::Handler {
     use Plackdo::HTTP::Status;
     use Plackdo::HTTP::Request;
     use Plackdo::TempBuffer::Memory;
+    use Plackdo::Socket;
 
     has Str $.host is rw = '0.0.0.0';
     has Int $.port is rw = 5000;
@@ -42,14 +39,8 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
     }
 
     method make_socket ($host, $port) {
-        my $sock = IO::Socket::INET.socket( PF_INET, SOCK_STREAM, TCP );
-
-        # IO::Socket::INET.bind doesn't return result 
-        my $attr = $sock.^attributes(:local).grep({ .name eq '$!PIO'})[0];
-        my $pio = $attr.get_value($sock);
-        my $sockaddr = $pio.sockaddr( $host, $port );
-        my $result = $pio.bind($sockaddr);
-#        $sock.bind( $.host, $.port );
+        my $sock = Plackdo::Socket.socket( 2, 1, 6 );
+        my $result = $sock.bind($host, $port);
         if ($result == 0) {
             return $sock;
         }

@@ -15,6 +15,6 @@ Host: localhost:5000
     say now - $t0;
 }
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

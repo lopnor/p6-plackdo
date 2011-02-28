@@ -37,6 +37,6 @@ Content-Type: application/x-www-form-urlencoded
 foo=bar&hoge=fuga";
 }
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

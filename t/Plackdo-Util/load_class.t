@@ -12,6 +12,6 @@ is $ins.WHAT, 'Plackdo::Handler::Standalone()';
 ok ! load_class('NotExistingHandler', 'Plackdo::Handler');
 ok ! load_instance('NotExistingHandler', 'Plackdo::Handler');
 
-done_testing;
+done;
 
 # vim:ft=perl6

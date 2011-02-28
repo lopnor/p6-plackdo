@@ -49,6 +49,6 @@ test_p6sgi(
     }
 );
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

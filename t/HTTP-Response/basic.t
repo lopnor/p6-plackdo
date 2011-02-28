@@ -32,6 +32,6 @@ Content-Type: text/html
     is $res.header('Content-Type'), 'text/html';
 }
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

@@ -11,6 +11,6 @@ Plackdo::MIME::set_fallback(
 );
 is Plackdo::MIME::mime_type(".vcd"), "application/x-cdlink";
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

@@ -83,5 +83,5 @@ my $handler = Plackdo::Handler::Standalone.new;
     say now - $t0;
 }
 
-done_testing;
+done;
 # vim: ft=perl6 :

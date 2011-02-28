@@ -31,6 +31,6 @@ ok 1;
     is Plackdo::Util::header_get($headers, 'foo'), 'baz';
 }
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

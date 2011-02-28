@@ -25,6 +25,6 @@ test_p6sgi(
     }
 );
 
-done_testing;
+done;
 
 # vim: set ft=perl6 :

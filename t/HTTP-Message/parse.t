@@ -42,6 +42,6 @@ body2
     
 
 
-done_testing;
+done;
 
 # vim: ft=perl6 :

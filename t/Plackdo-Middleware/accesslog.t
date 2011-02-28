@@ -40,6 +40,6 @@ ok $log ~~ /'"HEAD /foo HTTP/1.1" 200 -'/;
 
 ok unlink($logfile);
 
-done_testing;
+done;
 
 # vim: ft=perl6

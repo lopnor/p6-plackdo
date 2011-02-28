@@ -106,6 +106,6 @@ ok 1;
     is $uri, '/foobar?fuga#hoge'
 }
 
-done_testing;
+done;
 
 # vim: ft=perl6 :
