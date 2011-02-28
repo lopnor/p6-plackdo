@@ -17,7 +17,7 @@ class Plackdo::Handler::Standalone does Plackdo::Handler {
             my $value = .value;
             given .key {
                 when 'host' {$.host = $value}
-                when 'port' {$.port = $value}
+                when 'port' {$.port = $value.Int}
                 when 'server_ready' {&.server_ready = $value}
             }
         }
