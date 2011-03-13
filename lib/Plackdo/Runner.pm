@@ -13,7 +13,6 @@ class Plackdo::Runner {
         if ($app ~~ Exception) {
             die 'could not load p6sgi file:' ~ $app;
         }
-        say $app.WHAT;
         for @.middleware -> $name {
             my $mw = load_instance($name, 'Plackdo::Middleware') or next;
             $app = $mw.wrap($app);
