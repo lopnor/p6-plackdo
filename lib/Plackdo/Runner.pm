@@ -9,7 +9,11 @@ class Plackdo::Runner {
 
     method run (*%args) {
         my $handler = self.load_handler(|%args);
-        my $app = self.load_app() or die 'could not load p6sgi file';
+        my $app = self.load_app();
+        if ($app ~~ Exception) {
+            die 'could not load p6sgi file:' ~ $app;
+        }
+        say $app.WHAT;
         for @.middleware -> $name {
             my $mw = load_instance($name, 'Plackdo::Middleware') or next;
             $app = $mw.wrap($app);
@@ -27,8 +31,15 @@ class Plackdo::Runner {
     method load_app {
         my $app;
         try {
-            $!app.IO.f or die;
+            $!app.IO.f or die "{$!app} not found";
             $app = eval slurp $!app;
+            my $error = $!;
+            die $error if $error;
+            CATCH {
+                default { 
+                    $app := $!;
+                };
+            }
         }
         return $app;
     }

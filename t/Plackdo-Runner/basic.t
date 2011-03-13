@@ -29,7 +29,9 @@ ok 1;
     is $handler.WHAT, 'Plackdo::Handler::Standalone()';
     is $handler.host, '0.0.0.0';
     is $handler.port, 5000;
-    ok ! $runner.load_app;
+    ok my $app = $runner.load_app;
+    ok $app ~~ Exception;
+    is $app.Str, 'app.p6sgi not found';
 #    dies_ok { $runner.load_app };
 }
 {
@@ -44,14 +46,15 @@ ok 1;
         app => 't/Plackdo-Runner/fail.p6sgi'
     );
     my $app = $runner.load_app;
-    is $app.WHAT, 'Failure()'; 
+    is $app.WHAT, 'Exception()'; 
+    is $app.Str, 'Could not find sub &hogehoge';
 }
 {
     ok my $runner = Plackdo::Runner.new(
         app => 't/Plackdo-Runner/nonexisting.p6sgi'
     );
     my $app = $runner.load_app;
-    is $app.WHAT, 'Any()'; 
+    is $app.WHAT, 'Exception()'; 
 }
 
 done;
