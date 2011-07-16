@@ -1,0 +1,40 @@
+use v6;
+use Plackdo::Builder;
+use Plackdo::Middleware::XFramework;
+use Plackdo::App::URLMap;
+
+my $app1 = sub (%env) {
+    return (
+        200,
+        [
+            Content-Type => 'text/plain',
+            Content-Length => %env.perl.bytes,
+        ],
+        [ %env.perl ]
+    );
+};
+
+my $app2 = sub (%env) {
+    my $b = " <html> <head><title>App 2!</title></head> <body> <h1>App 2</h1> <pre>{%env.perl}</pre> </body> </html> ";
+    return (
+        200,
+        [
+            Content-Type => 'text/html',
+            Content-Length => $b.bytes,
+        ],
+        [ $b ]
+    );
+};
+
+my $builder = Plackdo::Builder.new;
+$builder.add_middleware(
+    Plackdo::Middleware::XFramework.new(framework => 'foobar')
+);
+
+my Plackdo::App::URLMap $urlmap .= new;
+$urlmap.mount('/plain', $builder.to_app($app1));
+$urlmap.mount('/html', $app2);
+
+$urlmap.to_app();
+
+# vim: ft=perl6
